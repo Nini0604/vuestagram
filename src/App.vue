@@ -10,7 +10,18 @@
     </ul>
     <img src="./assets/logo.png" class="logo">
   </div>
-  <Body :posts="posts" :activeTabNum="activeTabNum" :uploadImage="uploadImage" v-on:writeText="writeText=$event"/>
+
+  <h4>vuex에 저장된 나이 {{$store.state.age}}</h4>
+  <h4>vuex에 저장된 이름 {{$store.getters.getName}}</h4>
+  <button @click="$store.state.age++">나이더하기</button>
+  <button @click="$store.commit('addAge')">나이더하기</button>
+  <button @click="$store.commit('changeName','Tom')">이름바꾸기</button>
+  <!-- <button @click="$store.dispatch('changeName','Tom')">이름바꾸기</button> -->
+
+  <Body :selectFilter="selectFilter" :filters="filters" :posts="posts" :activeTabNum="activeTabNum" :uploadImage="uploadImage" v-on:writeText="writeText=$event"/>
+  
+  <button @click="showMore">더보기</button>
+
   <div class="footer">
     <ul class="footer-button-plus">
       <li>
@@ -23,8 +34,10 @@
 </template>
 
 <script>
+import axios from 'axios';
 import Body from './components/Body.vue';
 import posts from './assets/posts.js';
+import EventBus from './EventBus.js';
 
 export default {
   name: 'app',
@@ -33,13 +46,31 @@ export default {
       posts: posts,
       activeTabNum: 0,
       uploadImage: '',
-      writeText: ''
+      writeText: '',
+      filters: [ "normal", "clarendon", "gingham", "moon", "lark", "reyes", 
+      "juno", "slumber", "aden", "perpetua", "mayfair", "rise", "hudson", 
+      "valencia", "xpro2", "willow", "lofi", "inkwell", "nashville"],
+      selectFilter: ''
     }
+  },
+  mounted(){
+    EventBus.$on('select-filter', (filter) => {
+      /* eslint-disable */
+      console.log(filter);
+      this.selectFilter = filter;
+    });
   },
   components: {
     Body
   },
   methods: {
+    showMore() {
+      axios.get('https://yogoho210.github.io/postdata2.json').then(result => {
+        /* eslint-disable */
+        console.log(result.data);
+        this.posts.push(result.data);
+      });
+    },
     upload(e) {
       // 1. 다음페이지로 이동
       this.activeTabNum = 1;
@@ -67,7 +98,7 @@ export default {
         date: '1208',
         liked: false,
         caption: this.writeText, 
-        filter: "perpetua"
+        filter: this.selectFilter
       }
       this.posts.unshift(postData);
     }

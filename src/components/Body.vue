@@ -2,20 +2,18 @@
 <div class="body">
   <button v-on:click="$emit('money', '50000')">버튼</button>
   <div v-if="activeTabNum == 0">
-    <Post v-for="(post,index) in posts" :key="index" :post="post"/>
+    <Post :selectFilter="selectFilter" v-for="(post,index) in posts" :key="index" :post="post"/>
   </div>
   <div v-if="activeTabNum == 1">
-    <div class="upload-image" :style="'background-image:url('+uploadImage+')'"></div>
+    <div :class="['upload-image',selectFilter]" :style="'background-image:url('+uploadImage+')'"></div>
     <div class="filters">
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
-      <div class="filter-1"></div>
+      <FilterBox :image="uploadImage" :filter="filter" v-for="filter in filters" :key="filter">
+        <p>{{filter}}</p>
+      </FilterBox>
     </div>
   </div>
   <div v-if="activeTabNum == 2">
-    <div class="upload-image" :style="'background-image:url('+uploadImage+')'"></div>
+    <div :class="['upload-image',selectFilter]" :style="'background-image:url('+uploadImage+')'"></div>
     <div class="write">
       <textarea class="write-box" v-on:input="$emit('writeText',$event.target.value)">write!</textarea>
     </div>
@@ -25,6 +23,7 @@
 
 <script>
 import Post from './Post.vue';
+import FilterBox from './FilterBox.vue';
 
 export default {
   name: 'Body',
@@ -35,10 +34,13 @@ export default {
   props: {
     posts : Array,
     activeTabNum: Number,
-    uploadImage: String
+    uploadImage: String,
+    filters: Array,
+    selectFilter: String
   },
   components: {
-    Post
+    Post,
+    FilterBox
   }
 }
 </script>

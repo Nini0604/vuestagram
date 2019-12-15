@@ -4,7 +4,7 @@
       <div class="profile" :style="'background-image:url('+post.userImage+')'"></div>
       <span class="profile-name">{{post.name}}</span>
     </div>
-    <div class="post-body" :style="'background-image:url('+post.postImage+')'"></div>
+    <div :class="['post-body',selectFilter]" :style="'background-image:url('+post.postImage+')'"></div>
     <div class="post-content">
       <p>{{post.likes}} Likes</p>
       <p>
@@ -23,7 +23,8 @@ export default {
     }
   },
   props: {
-    post : Object
+    post : Object,
+    selectFilter: String
   }
 }
 </script>
